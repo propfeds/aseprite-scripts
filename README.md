@@ -1,5 +1,5 @@
 # aseprite-scripts
-Made with 100% mind-boggling garbage collection of Lua.
+Made with 100% mind-boggling garbage collection of Lua and garbage script execution of Aseprite.
 
 **terminal_blues_export**: Used to export from master.aseprite of [Terminal Blues](https://github.com/propfeds/terminal-blues/)
 
