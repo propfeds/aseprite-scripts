@@ -183,6 +183,7 @@ function floyd_steinberg_dither(image, palette)
                 quant_err_b=quant_err_b-db
             end
         end
+        collectgarbage()
     end
 end
 
