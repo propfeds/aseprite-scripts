@@ -1,35 +1,3 @@
-function get_r(colour)
-    return app.pixelColor.rgbaR(colour)
-end
-function get_g(colour)
-    return app.pixelColor.rgbaG(colour)
-end
-function get_b(colour)
-    return app.pixelColor.rgbaB(colour)
-end
-function nearest_colour(colour, palette)
-    local r=get_r(colour)
-    local g=get_g(colour)
-    local b=get_b(colour)
-    local idx=-1
-    local dist_min=1000000007
-    local col_ref=0
-    local dist=0
-    for i=0, #palette-1
-    do
-        col_ref=palette:getColor(i).rgbaPixel
-        dr=get_r(col_ref)-r
-        dg=get_g(col_ref)-g
-        db=get_b(col_ref)-b
-        dist=dr*dr+dg*dg+db*db
-        if dist<dist_min
-        then
-            dist_min=dist
-            idx=i
-        end
-    end
-    return idx
-end
 function nearest_colour_raw(r, g, b, palette)
     local idx=0
     local dist_min=1000000007
@@ -38,9 +6,9 @@ function nearest_colour_raw(r, g, b, palette)
     for i=0, #palette-1
     do
         col_ref=palette:getColor(i).rgbaPixel
-        dr=get_r(col_ref)-r
-        dg=get_g(col_ref)-g
-        db=get_b(col_ref)-b
+        dr=(col_ref&0xff)-r
+        dg=((col_ref>>8)&0xff)-g
+        db=((col_ref>>16)&0xff)-b
         dist=dr*dr+dg*dg+db*db
         if dist<dist_min
         then
@@ -48,9 +16,10 @@ function nearest_colour_raw(r, g, b, palette)
             idx=i
         end
     end
-    return palette:getColor(idx)
+    return palette:getColor(idx).rgbaPixel
 end
 function floyd_steinberg_dither(image, palette)
+    local nearest_colour=nearest_colour_raw
     -- Either Lua is fucking bad at garbage collection, or Aseprite is.
     local dr=0
     local dg=0
@@ -105,14 +74,14 @@ function floyd_steinberg_dither(image, palette)
                     buffer_h_b=0
                 end
                 col_old=image:getPixel(x, y)
-                nr=get_r(col_old)+buffer_h_r+buffer_v_r[x]
-                ng=get_g(col_old)+buffer_h_g+buffer_v_g[x]
-                nb=get_b(col_old)+buffer_h_b+buffer_v_b[x]
-                col_new=nearest_colour_raw(nr, ng, nb, palette).rgbaPixel
+                nr=(col_old&0xff)+buffer_h_r+buffer_v_r[x]
+                ng=((col_old>>8)&0xff)+buffer_h_g+buffer_v_g[x]
+                nb=((col_old>>16)&0xff)+buffer_h_b+buffer_v_b[x]
+                col_new=nearest_colour(nr, ng, nb, palette)
                 image:drawPixel(x, y, col_new)
-                quant_err_r=quant_err_r+(nr-get_r(col_new))
-                quant_err_g=quant_err_g+(ng-get_g(col_new))
-                quant_err_b=quant_err_b+(nb-get_b(col_new))
+                quant_err_r=quant_err_r+(nr-(col_new&0xff))
+                quant_err_g=quant_err_g+(ng-((col_new>>8)&0xff))
+                quant_err_b=quant_err_b+(nb-((col_old>>16)&0xff))
 
                 dr=quant_err_r*7/16
                 dg=quant_err_g*7/16
@@ -164,14 +133,14 @@ function floyd_steinberg_dither(image, palette)
                     buffer_h_b=0
                 end
                 col_old=image:getPixel(x, y)
-                nr=get_r(col_old)+buffer_h_r+buffer_v_r[x]
-                ng=get_g(col_old)+buffer_h_g+buffer_v_g[x]
-                nb=get_b(col_old)+buffer_h_b+buffer_v_b[x]
-                col_new=nearest_colour_raw(nr, ng, nb, palette).rgbaPixel
+                nr=(col_old&0xff)+buffer_h_r+buffer_v_r[x]
+                ng=((col_old>>8)&0xff)+buffer_h_g+buffer_v_g[x]
+                nb=((col_old>>16)&0xff)+buffer_h_b+buffer_v_b[x]
+                col_new=nearest_colour(nr, ng, nb, palette)
                 image:drawPixel(x, y, col_new)
-                quant_err_r=quant_err_r+(nr-get_r(col_new))
-                quant_err_g=quant_err_g+(ng-get_g(col_new))
-                quant_err_b=quant_err_b+(nb-get_b(col_new))
+                quant_err_r=quant_err_r+(nr-(col_new&0xff))
+                quant_err_g=quant_err_g+(ng-((col_new>>16)&0xff))
+                quant_err_b=quant_err_b+(nb-((col_old>>8)&0xff))
                 
                 dr=quant_err_r*7/16
                 dg=quant_err_g*7/16
@@ -220,3 +189,4 @@ end
 local image=app.activeImage
 local palette=app.activeSprite.palettes[1]
 floyd_steinberg_dither(image, palette)
+collectgarbage()
