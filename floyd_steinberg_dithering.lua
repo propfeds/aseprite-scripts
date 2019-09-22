@@ -158,11 +158,12 @@ function floyd_steinberg_dither(image, palette)
                 quant_err_b=quant_err_b-buffer_vn_b[x+1]
             end
         end
-        collectgarbage()
     end
 end
 
 local image=app.activeImage
 local palette=app.activeSprite.palettes[1]
-floyd_steinberg_dither(image, palette)
 collectgarbage()
+collectgarbage("setpause", 150)
+floyd_steinberg_dither(image, palette)
+collectgarbage("setpause", 100)
