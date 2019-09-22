@@ -63,7 +63,7 @@ function floyd_steinberg_dither(image, palette)
             buffer_v_g[x]=buffer_vn_g[x]
             buffer_v_b[x]=buffer_vn_b[x]
         end
-        if y%2
+        if y&1
         then
             for x=0, image.width-1
             do
@@ -81,7 +81,7 @@ function floyd_steinberg_dither(image, palette)
                 image:drawPixel(x, y, col_new)
                 quant_err_r=quant_err_r+(nr-(col_new&0xff))
                 quant_err_g=quant_err_g+(ng-((col_new>>8)&0xff))
-                quant_err_b=quant_err_b+(nb-((col_old>>16)&0xff))
+                quant_err_b=quant_err_b+(nb-((col_new>>16)&0xff))
 
                 dr=quant_err_r*7/16
                 dg=quant_err_g*7/16
@@ -140,7 +140,7 @@ function floyd_steinberg_dither(image, palette)
                 image:drawPixel(x, y, col_new)
                 quant_err_r=quant_err_r+(nr-(col_new&0xff))
                 quant_err_g=quant_err_g+(ng-((col_new>>16)&0xff))
-                quant_err_b=quant_err_b+(nb-((col_old>>8)&0xff))
+                quant_err_b=quant_err_b+(nb-((col_new>>8)&0xff))
                 
                 dr=quant_err_r*7/16
                 dg=quant_err_g*7/16
