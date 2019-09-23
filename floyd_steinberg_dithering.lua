@@ -43,7 +43,7 @@ function floyd_steinberg_dither(image, palette)
     local buffer_vn_r={}
     local buffer_vn_g={}
     local buffer_vn_b={}
-    for x=0, image.width-1
+    for x=-1, image.width
     do
         buffer_v_r[x]=0
         buffer_v_g[x]=0
@@ -62,16 +62,14 @@ function floyd_steinberg_dither(image, palette)
             buffer_v_g[x]=buffer_vn_g[x]
             buffer_v_b[x]=buffer_vn_b[x]
         end
+        -- Horizontal quantisation runs like a snake so we don't need to account for that
+        quant_err_r=quant_err_r+buffer_v_r[-1]+buffer_v_r[image.width]
+        quant_err_g=quant_err_g+buffer_v_g[-1]+buffer_v_g[image.width]
+        quant_err_b=quant_err_b+buffer_v_b[-1]+buffer_v_b[image.width]
         if y&1
         then
             for x=0, image.width-1
             do
-                if not x -- Equiv to x==0
-                then
-                    buffer_h_r=0
-                    buffer_h_g=0
-                    buffer_h_b=0
-                end
                 col_old=image:getPixel(x, y)
                 nr=(col_old&0xff)+buffer_h_r+buffer_v_r[x]
                 ng=((col_old>>8)&0xff)+buffer_h_g+buffer_v_g[x]
@@ -81,52 +79,38 @@ function floyd_steinberg_dither(image, palette)
                 quant_err_r=quant_err_r+(nr-(col_new&0xff))
                 quant_err_g=quant_err_g+(ng-((col_new>>8)&0xff))
                 quant_err_b=quant_err_b+(nb-((col_new>>16)&0xff))
-                if x~=image.width-1
-                then
-                    buffer_h_r=quant_err_r*7/16
-                    buffer_h_g=quant_err_g*7/16
-                    buffer_h_b=quant_err_b*7/16
-                    quant_err_r=quant_err_r-buffer_h_r
-                    quant_err_g=quant_err_g-buffer_h_g
-                    quant_err_b=quant_err_b-buffer_h_b
-                end
-                if y~=image.height-1
-                then
-                    if x~=image.width-1
-                    then
-                        buffer_vn_r[x+1]=quant_err_r*1/16
-                        buffer_vn_g[x+1]=quant_err_g*1/16
-                        buffer_vn_b[x+1]=quant_err_b*1/16
-                        quant_err_r=quant_err_r-buffer_vn_r[x+1]
-                        quant_err_g=quant_err_g-buffer_vn_g[x+1]
-                        quant_err_b=quant_err_b-buffer_vn_b[x+1]
-                    end
-                    buffer_vn_r[x]=quant_err_r*5/16
-                    buffer_vn_g[x]=quant_err_g*5/16
-                    buffer_vn_b[x]=quant_err_b*5/16
-                    quant_err_r=quant_err_r-buffer_vn_r[x]
-                    quant_err_g=quant_err_g-buffer_vn_g[x]
-                    quant_err_b=quant_err_b-buffer_vn_b[x]
-                    if x
-                    then
-                        buffer_vn_r[x-1]=quant_err_r*3/16
-                        buffer_vn_g[x-1]=quant_err_g*3/16
-                        buffer_vn_b[x-1]=quant_err_b*3/16
-                        quant_err_r=quant_err_r-buffer_vn_r[x-1]
-                        quant_err_g=quant_err_g-buffer_vn_g[x-1]
-                        quant_err_b=quant_err_b-buffer_vn_b[x-1]
-                    end
-                end
+
+                buffer_h_r=quant_err_r*7/16
+                buffer_h_g=quant_err_g*7/16
+                buffer_h_b=quant_err_b*7/16
+                quant_err_r=quant_err_r-buffer_h_r
+                quant_err_g=quant_err_g-buffer_h_g
+                quant_err_b=quant_err_b-buffer_h_b
+
+                buffer_vn_r[x+1]=quant_err_r*1/16
+                buffer_vn_g[x+1]=quant_err_g*1/16
+                buffer_vn_b[x+1]=quant_err_b*1/16
+                quant_err_r=quant_err_r-buffer_vn_r[x+1]
+                quant_err_g=quant_err_g-buffer_vn_g[x+1]
+                quant_err_b=quant_err_b-buffer_vn_b[x+1]
+
+                buffer_vn_r[x]=quant_err_r*5/16
+                buffer_vn_g[x]=quant_err_g*5/16
+                buffer_vn_b[x]=quant_err_b*5/16
+                quant_err_r=quant_err_r-buffer_vn_r[x]
+                quant_err_g=quant_err_g-buffer_vn_g[x]
+                quant_err_b=quant_err_b-buffer_vn_b[x]
+
+                buffer_vn_r[x-1]=quant_err_r*3/16
+                buffer_vn_g[x-1]=quant_err_g*3/16
+                buffer_vn_b[x-1]=quant_err_b*3/16
+                quant_err_r=quant_err_r-buffer_vn_r[x-1]
+                quant_err_g=quant_err_g-buffer_vn_g[x-1]
+                quant_err_b=quant_err_b-buffer_vn_b[x-1]
             end
         else
             for x=image.width-1, 0, -1
             do
-                if x==image.width-1
-                then
-                    buffer_h_r=0
-                    buffer_h_g=0
-                    buffer_h_b=0
-                end
                 col_old=image:getPixel(x, y)
                 nr=(col_old&0xff)+buffer_h_r+buffer_v_r[x]
                 ng=((col_old>>8)&0xff)+buffer_h_g+buffer_v_g[x]
@@ -137,42 +121,33 @@ function floyd_steinberg_dither(image, palette)
                 quant_err_g=quant_err_g+(ng-((col_new>>16)&0xff))
                 quant_err_b=quant_err_b+(nb-((col_new>>8)&0xff))
                 
-                if x
-                then
-                    buffer_h_r=quant_err_r*7/16
-                    buffer_h_g=quant_err_g*7/16
-                    buffer_h_b=quant_err_b*7/16
-                    quant_err_r=quant_err_r-buffer_h_r
-                    quant_err_g=quant_err_g-buffer_h_g
-                    quant_err_b=quant_err_b-buffer_h_b
-                end
-                if y~=image.height-1
-                then
-                    if x
-                    then
-                        buffer_vn_r[x-1]=quant_err_r*1/16
-                        buffer_vn_g[x-1]=quant_err_g*1/16
-                        buffer_vn_b[x-1]=quant_err_b*1/16
-                        quant_err_r=quant_err_r-buffer_vn_r[x-1]
-                        quant_err_g=quant_err_g-buffer_vn_g[x-1]
-                        quant_err_b=quant_err_b-buffer_vn_b[x-1]
-                    end
-                    buffer_vn_r[x]=quant_err_r*5/16
-                    buffer_vn_g[x]=quant_err_g*5/16
-                    buffer_vn_b[x]=quant_err_b*5/16
-                    quant_err_r=quant_err_r-buffer_vn_r[x]
-                    quant_err_g=quant_err_g-buffer_vn_g[x]
-                    quant_err_b=quant_err_b-buffer_vn_b[x]
-                    if x~=image.width-1
-                    then
-                        buffer_vn_r[x+1]=quant_err_r*3/16
-                        buffer_vn_g[x+1]=quant_err_g*3/16
-                        buffer_vn_b[x+1]=quant_err_b*3/16
-                        quant_err_r=quant_err_r-buffer_vn_r[x+1]
-                        quant_err_g=quant_err_g-buffer_vn_g[x+1]
-                        quant_err_b=quant_err_b-buffer_vn_b[x+1]
-                    end
-                end
+                buffer_h_r=quant_err_r*7/16
+                buffer_h_g=quant_err_g*7/16
+                buffer_h_b=quant_err_b*7/16
+                quant_err_r=quant_err_r-buffer_h_r
+                quant_err_g=quant_err_g-buffer_h_g
+                quant_err_b=quant_err_b-buffer_h_b
+
+                buffer_vn_r[x-1]=quant_err_r*1/16
+                buffer_vn_g[x-1]=quant_err_g*1/16
+                buffer_vn_b[x-1]=quant_err_b*1/16
+                quant_err_r=quant_err_r-buffer_vn_r[x-1]
+                quant_err_g=quant_err_g-buffer_vn_g[x-1]
+                quant_err_b=quant_err_b-buffer_vn_b[x-1]
+
+                buffer_vn_r[x]=quant_err_r*5/16
+                buffer_vn_g[x]=quant_err_g*5/16
+                buffer_vn_b[x]=quant_err_b*5/16
+                quant_err_r=quant_err_r-buffer_vn_r[x]
+                quant_err_g=quant_err_g-buffer_vn_g[x]
+                quant_err_b=quant_err_b-buffer_vn_b[x]
+
+                buffer_vn_r[x+1]=quant_err_r*3/16
+                buffer_vn_g[x+1]=quant_err_g*3/16
+                buffer_vn_b[x+1]=quant_err_b*3/16
+                quant_err_r=quant_err_r-buffer_vn_r[x+1]
+                quant_err_g=quant_err_g-buffer_vn_g[x+1]
+                quant_err_b=quant_err_b-buffer_vn_b[x+1]
             end
         end
     end
