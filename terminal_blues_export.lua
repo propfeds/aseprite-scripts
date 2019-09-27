@@ -1,5 +1,7 @@
 function export(sprite, directory, variant)
-    app.command.LayerVisibility(sprite.layers[1])
+
+    local equipment=sprite.layers[7].layers[1]
+    equipment.isVisible=true
 
     sprite:crop(0, 304, 384, 64)
     sprite:saveCopyAs(directory..variant..'/equipment/mini16.bmp')
@@ -9,7 +11,7 @@ function export(sprite, directory, variant)
     sprite:saveCopyAs(directory..variant..'/equipment/minif16.bmp')
     app.command.Undo()
 
-    app.command.LayerVisibility(sprite.layers[1])
+    equipment.isVisible=false
 
     sprite:crop(0, 0, 80, 96)
     sprite:saveCopyAs(directory..variant..'/gfx/alphabet_brass.bmp')
@@ -52,6 +54,7 @@ local directory='D:/Internet Explorer/Lock/Hobbies/Fine Art/Digital/[2019]/Termi
 local sprite=app.activeSprite
 
 export(sprite, directory, 'blues')
+collectgarbage()
 --[[
 export(sprite, 'D:/Games/Roguelikes/', 'powder118_win')
 --]]
