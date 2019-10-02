@@ -1,60 +1,28 @@
-function export(sprite, directory, variant)
-
-    local equipment=sprite.layers[7].layers[1]
-    equipment.isVisible=true
-
-    sprite:crop(0, 304, 384, 64)
-    sprite:saveCopyAs(directory..variant..'/equipment/mini16.bmp')
-    app.command.Undo()
-
-    sprite:crop(0, 368, 384, 64)
-    sprite:saveCopyAs(directory..variant..'/equipment/minif16.bmp')
-    app.command.Undo()
-
-    equipment.isVisible=false
-
-    sprite:crop(0, 0, 80, 96)
-    sprite:saveCopyAs(directory..variant..'/gfx/alphabet_brass.bmp')
-    app.command.Undo()
-
-    sprite:crop(80, 0, 80, 96)
-    sprite:saveCopyAs(directory..variant..'/gfx/alphabet_classic.bmp')
-    app.command.Undo()
-
-    sprite:crop(160, 0, 80, 96)
-    sprite:saveCopyAs(directory..variant..'/gfx/alphabet_heavy.bmp')
-    app.command.Undo()
-
-    sprite:crop(240, 0, 80, 96)
-    sprite:saveCopyAs(directory..variant..'/gfx/alphabet_light.bmp')
-    app.command.Undo()
-
-    sprite:crop(320, 0, 80, 96)
-    sprite:saveCopyAs(directory..variant..'/gfx/alphabet_shadow.bmp')
-    app.command.Undo()
-
-    sprite:crop(0, 96, 384, 208)
-    sprite:saveCopyAs(directory..variant..'/gfx/dungeon16.bmp')
-    app.command.Undo()
-
-    sprite:crop(0, 304, 384, 64)
-    sprite:saveCopyAs(directory..variant..'/gfx/mini16.bmp')
-    app.command.Undo()
-
-    sprite:crop(0, 368, 384, 64)
-    sprite:saveCopyAs(directory..variant..'/gfx/minif16.bmp')
-    app.command.Undo()
-
-    sprite:crop(0, 432, 384, 96)
-    sprite:saveCopyAs(directory..variant..'/gfx/sprite16.bmp')
-    app.command.Undo()
-end
-
-local directory='D:/Internet Explorer/Lock/Hobbies/Fine Art/Digital/[2019]/Terminal Blues - A Powder Tileset/'
+local directory='D:/Google Drive (7r4nm1nh@gmail.com)/Art/Digital/2019/Terminal Blues/'
 local sprite=app.activeSprite
 
+function export(sprite, directory, variant, equipment)
+    if equipment
+    then
+        local equipment_layer=sprite.layers[7].layers[1]
+        local prev_visible_state=equipment_layer.isVisible
+        equipment_layer.isVisible=true
+        app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/equipment/mini16.bmp', slice="mini16" }
+        app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/equipment/minif16.bmp', slice="minif16" }
+        equipment_layer.isVisible=false
+    end
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_brass.bmp', slice="alphabet_brass" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_classic.bmp', slice="alphabet_classic" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_heavy.bmp', slice="alphabet_heavy" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_light.bmp', slice="alphabet_light" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_shadow.bmp', slice="alphabet_shadow" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/dungeon16.bmp', slice="dungeon16" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/mini16.bmp', slice="mini16" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/minif16.bmp', slice="minif16" }
+    app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/sprite16.bmp', slice="sprite16" }
+end
+
 export(sprite, directory, 'blues')
-collectgarbage()
 --[[
 export(sprite, 'D:/Games/Roguelikes/', 'powder118_win')
 --]]
