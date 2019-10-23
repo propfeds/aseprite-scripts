@@ -156,6 +156,6 @@ end
 local image=app.activeImage
 local palette=app.activeSprite.palettes[1]
 collectgarbage()
-collectgarbage("setpause", 150)
+collectgarbage('setpause', 150)
 floyd_steinberg_dither(image, palette)
-collectgarbage("setpause", 100)
+collectgarbage('setpause', 100)
