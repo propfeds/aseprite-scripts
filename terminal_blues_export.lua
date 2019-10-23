@@ -2,17 +2,21 @@ local directory='D:/Google Drive (7r4nm1nh@gmail.com)/Art/Digital/2019/Terminal 
 local sprite=app.activeSprite
 
 function export(sprite, directory, variant, equipment)
-    local equipment_layer=sprite.layers[7].layers[1]
-    local equipment_prev_state=equipment_layer.isVisible
+    local layer_bg=sprite.layers[3].layers[2]
+    local prev_state_bg=layer_bg.isVisible
+    layer_bg.isVisible=false
 
-    if equipment
-    then
-        equipment_layer.isVisible=true
+    local layer_equipment=sprite.layers[6].layers[1]
+    local prev_state_equipment=layer_equipment.isVisible
+
+
+    if equipment then
+        layer_equipment.isVisible=true
         app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/equipment/mini16.bmp', slice="mini16" }
         app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/equipment/minif16.bmp', slice="minif16" }
     end
 
-    equipment_layer.isVisible=false
+    layer_equipment.isVisible=false
     app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_brass.bmp', slice="alphabet_brass" }
     app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_classic.bmp', slice="alphabet_classic" }
     app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/alphabet_heavy.bmp', slice="alphabet_heavy" }
@@ -23,7 +27,9 @@ function export(sprite, directory, variant, equipment)
     app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/minif16.bmp', slice="minif16" }
     app.command.SaveFileCopyAs{ useUI="false", filename=directory..variant..'/gfx/sprite16.bmp', slice="sprite16" }
 
-    equipment_layer.isVisible=equipment_prev_state
+    layer_equipment.isVisible=prev_state_equipment
+
+    layer_bg.isVisible=prev_state_bg
 end
 
 export(sprite, directory, 'blues', true)
