@@ -6,9 +6,8 @@ function export(sprite, directory, variant, equipment)
     local prev_state_bg=layer_bg.isVisible
     layer_bg.isVisible=false
 
-    local layer_equipment=sprite.layers[6].layers[1]
+    local layer_equipment=sprite.layers[4].layers[3].layers[2]
     local prev_state_equipment=layer_equipment.isVisible
-
 
     if equipment then
         layer_equipment.isVisible=true
