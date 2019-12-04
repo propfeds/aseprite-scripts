@@ -1,4 +1,3 @@
-
 function export(sprite, directory, equipment, extra_alphabets)
     local layer_folder_ref=sprite.layers[3]
     local prev_state_bg=layer_folder_ref.isVisible
@@ -86,6 +85,16 @@ function export(sprite, directory, equipment, extra_alphabets)
             filename=directory..'extra_alphabets/alphabet_textmachine_handwriting.bmp',
             slice='alphabet_extra_polyducks'
         }
+        app.command.SaveFileCopyAs{
+            useUI='false',
+            filename=directory..'extra_alphabets/alphabet_ibm_cga_thin.bmp',
+            slice='alphabet_extra_ibm_cga_thin'
+        }
+        app.command.SaveFileCopyAs{
+            useUI='false',
+            filename=directory..'extra_alphabets/alphabet_cheepicus.bmp',
+            slice='alphabet_extra_cheepicus'
+        }
     end
     layer_extra_alphabets.isVisible=false
     layer_extra_alphabets.isVisible=prev_state_alphabets
@@ -95,6 +104,6 @@ end
 
 local project_directory=app.activeSprite.filename:match("(.*[/\\])")
 export(app.activeSprite, project_directory..'export/blues/', true, true)
---[[
+---[[
 export(app.activeSprite, 'D:/Games/Roguelikes/powder118_win/gfx/', false, false)
 --]]
