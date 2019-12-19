@@ -1,7 +1,10 @@
 function export(sprite, directory, equipment, extra_alphabets)
-    local layer_folder_ref=sprite.layers[3]
-    local prev_state_ref=layer_folder_ref.isVisible
-    layer_folder_ref.isVisible=false
+    local layer_ref_under=sprite.layers[3]
+    local layer_ref_over=sprite.layers[6]
+    local prev_state_ref_under=layer_ref_under.isVisible
+    local prev_state_ref_over=layer_ref_over.isVisible
+    layer_ref_under.isVisible=false
+    layer_ref_over.isVisible=false
 
     local layer_equipment=sprite.layers[4].layers[3].layers[2]
     local prev_state_equipment=layer_equipment.isVisible
@@ -81,12 +84,28 @@ function export(sprite, directory, equipment, extra_alphabets)
         end
     end
     layer_extra_alphabets.isVisible=prev_state_alphabets
-
-    layer_folder_ref.isVisible=prev_state_ref
+    layer_equipment.isVisible=prev_state_equipment
+    layer_ref_under.isVisible=prev_state_ref_under
+    layer_ref_over.isVisible=prev_state_ref_over
 end
 
-local project_directory=app.activeSprite.filename:match("(.*[/\\])")
-export(app.activeSprite, project_directory..'export/blues/', true, true)
----[[
-export(app.activeSprite, 'D:/Games/Roguelikes/powder118_win/gfx/', false, false)
---]]
+local sprite=app.activeSprite
+local project_directory=sprite.filename:match("(.*[/\\])")
+app.transaction(
+    function()
+        local palette_cur=sprite.palettes[1]
+        palette_cur:saveAs(project_directory..'palettes/current.gpl')
+
+        sprite:loadPalette(project_directory..'palettes/blues.gpl')
+        export(sprite, project_directory..'export/blues/', true, true)
+        
+        sprite:loadPalette(project_directory..'palettes/prot.gpl')
+        export(sprite, project_directory..'export/protea/', true, true)
+
+        sprite:loadPalette(project_directory..'palettes/current.gpl')
+        ---[[
+        export(sprite, 'D:/Games/Roguelikes/powder118_win/gfx/', false, false)
+        --]]
+        
+    end
+)
