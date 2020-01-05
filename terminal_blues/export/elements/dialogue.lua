@@ -103,7 +103,7 @@ dlg=Dialog('Terminal Blues: Export')
 
 :button{
     id='ok',
-    text='Export (Creates Transaction)'}
+    text='Export (Creates Transactions)'}
 :button{
     id='cancel',
     text='Cancel'}

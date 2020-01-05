@@ -40,7 +40,7 @@ function export(sprite, dir, override, equipment, extra_alph, alph_in, alph_out)
     if extra_alph then
         layers.extra_alph.isVisible=true
         local alph_list={}
-        for i, layer in ipairs(layer.extra_alph.layers) do
+        for i, layer in ipairs(layers.extra_alph.layers) do
             alph_list[layer.name]=i
         end
         if override then
@@ -52,7 +52,7 @@ function export(sprite, dir, override, equipment, extra_alph, alph_in, alph_out)
                 end
             end
         else
-            for i, layer in ipairs(layer.extra_alph.layers) do
+            for i, layer in ipairs(layers.extra_alph.layers) do
                 if layer.isVisible then
                     save_slice('alphabet_extra_'..layer.name, dir,
                     'extra_alphabets/', 'alphabet_'..layer.name)

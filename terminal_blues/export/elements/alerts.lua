@@ -1,4 +1,4 @@
-errors={
+alerts={
     active_sprite_nil={
         title='Terminal Blues: Active sprite is nil',
         text={
@@ -23,6 +23,13 @@ errors={
         title='Terminal Blues: Custom dir is empty',
         text={
             'Error: The custom directory field is empty.'
+        }
+    },
+    export_complete={
+        title='Terminal Blues: Export complete',
+        text={
+            'Victory! ',
+            ' transaction(s) were created.'
         }
     }
 }
