@@ -1,2 +1,3 @@
 external/
 test/
+pixel_perf_skewer/config.lua
